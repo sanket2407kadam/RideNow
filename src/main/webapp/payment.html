@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RideNow | Payment</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Segoe UI',Tahoma,sans-serif;
+  background:linear-gradient(135deg,#e0e7ff,#f8fafc);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ===== CARD ===== */
+.payment-box{
+  background:#fff;
+  width:380px;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 15px 40px rgba(0,0,0,.15);
+  animation:fadeIn .6s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ===== HEADER ===== */
+.logo{
+  text-align:center;
+  font-size:1.6em;
+  font-weight:800;
+  color:#2563eb;
+  margin-bottom:10px;
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+  color:#111827;
+}
+
+/* ===== PAYMENT OPTIONS ===== */
+.option{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  border-radius:12px;
+  border:2px solid #e5e7eb;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.option:hover{
+  border-color:#2563eb;
+  background:#eff6ff;
+}
+
+.option input{
+  accent-color:#2563eb;
+}
+
+.option span{
+  font-weight:600;
+}
+
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:14px;
+  background:#16a34a;
+  color:#fff;
+  font-size:1.1em;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{
+  background:#15803d;
+  transform:scale(1.04);
+  box-shadow:0 10px 25px rgba(22,163,74,.4);
+}
+
+/* ===== FOOTER TEXT ===== */
+.secure{
+  text-align:center;
+  font-size:.9em;
+  color:#6b7280;
+  margin-top:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="payment-box">
+  <div class="logo">🚘 RideNow</div>
+  <h2>Complete Payment</h2>
+
+  <label class="option">
+    <input type="radio" name="pay" value="UPI" checked>
+    <span>📱 UPI Payment</span>
+  </label>
+
+  <label class="option">
+    <input type="radio" name="pay" value="Card">
+    <span>💳 Debit / Credit Card</span>
+  </label>
+
+  <label class="option">
+    <input type="radio" name="pay" value="Cash">
+    <span>💵 Cash Payment</span>
+  </label>
+
+  <button onclick="pay()">Pay Now</button>
+
+  <div class="secure">🔒 100% Secure Payment</div>
+</div>
+
+<script>
+const r = new URLSearchParams(location.search).get("rideId");
+if(!r){
+  alert("Invalid Ride");
+  location.href="index.html";
+}
+
+function pay(){
+  const m = document.querySelector('input[name="pay"]:checked').value;
+
+  fetch("PaymentServlet",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`rideId=${r}&pay=${m}`
+  }).then(()=>{
+    location.href="success.html";
+  });
+}
+</script>
+
+</body>
+</html>

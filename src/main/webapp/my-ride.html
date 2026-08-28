@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Rides</title>
+    <style>
+        body{font-family:Segoe UI;background:#f4f6f8}
+        .box{width:700px;margin:60px auto;background:#fff;padding:30px;
+        border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+        table{width:100%;border-collapse:collapse}
+        th,td{padding:10px;border-bottom:1px solid #ddd;text-align:center}
+        th{background:#2563eb;color:#fff}
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>My Rides</h2>
+    <table>
+        <tr>
+            <th>Pickup</th>
+            <th>Drop</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+        <!-- Table rows will be injected by the Servlet -->
+        <tbody id="rideRows">
+            <!-- Example: will be replaced by backend data -->
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

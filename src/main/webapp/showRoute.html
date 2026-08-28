@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RideNow | Ride Route</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Segoe UI',Tahoma,sans-serif;
+  background:#f4f6f8;
+  color:#333;
+}
+
+/* ===== HEADER ===== */
+.header{
+  background:#fff;
+  padding:20px 40px;
+  box-shadow:0 4px 14px rgba(0,0,0,.1);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{
+  font-size:1.7em;
+  font-weight:800;
+  color:#2563eb;
+}
+
+/* ===== MAP ===== */
+#map{
+  height:380px;
+  border-radius:16px;
+  margin-top:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+/* ===== CARD ===== */
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:30px;
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:25px;
+  margin-top:20px;
+  box-shadow:0 8px 22px rgba(0,0,0,.1);
+}
+
+/* ===== DETAILS ===== */
+.details p{
+  font-size:1.05em;
+  margin-bottom:10px;
+}
+.details span{
+  font-weight:600;
+  color:#2563eb;
+}
+
+/* ===== VEHICLE SELECTION ===== */
+.vehicles{
+  display:flex;
+  gap:15px;
+  margin:20px 0;
+}
+.vehicle{
+  flex:1;
+  padding:18px;
+  border-radius:14px;
+  border:2px solid #e5e7eb;
+  text-align:center;
+  cursor:pointer;
+  font-weight:600;
+  transition:.3s;
+}
+.vehicle:hover{
+  border-color:#2563eb;
+  background:#eff6ff;
+  transform:translateY(-6px);
+}
+.vehicle.active{
+  background:#2563eb;
+  color:#fff;
+  border-color:#2563eb;
+}
+
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:#fff;
+  font-size:1.1em;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+}
+button:hover{
+  background:#1e4fd6;
+  transform:scale(1.03);
+}
+
+/* ===== FOOTER ===== */
+footer{
+  background:#111827;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+  margin-top:40px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <div class="logo">🚘 RideNow</div>
+  <div style="font-weight:600;">Ride Details</div>
+</div>
+
+<div class="container">
+
+  <!-- ===== MAP ===== -->
+  <div id="map"></div>
+
+  <!-- ===== RIDE DETAILS ===== -->
+  <div class="card">
+    <div class="details">
+      <p>📍 <b>Pickup:</b> <span id="pickup"></span></p>
+      <p>🏁 <b>Drop:</b> <span id="drop"></span></p>
+      <p>📏 <b>Distance:</b> <span id="distance"></span> km</p>
+      <p>💰 <b>Fare:</b> ₹<span id="fare">0</span></p>
+    </div>
+
+    <!-- ===== VEHICLES ===== -->
+    <h4 style="margin-top:15px;">Choose Vehicle</h4>
+    <div class="vehicles">
+      <div class="vehicle" onclick="selectVehicle(this,'Bike',0.8)">🏍 Bike</div>
+      <div class="vehicle" onclick="selectVehicle(this,'Auto',1)">🛺 Auto</div>
+      <div class="vehicle" onclick="selectVehicle(this,'Cab',1.5)">🚗 Cab</div>
+    </div>
+
+    <button onclick="goToPayment()">Continue to Payment</button>
+  </div>
+</div>
+
+<footer>
+  <p>🚘 RideNow © 2025. Safe & Reliable Rides</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+const p = new URLSearchParams(location.search);
+const rideId = p.get("rideId");
+const pickup = p.get("pickup");
+const drop = p.get("drop");
+
+document.getElementById("pickup").innerText = pickup;
+document.getElementById("drop").innerText = drop;
+
+let distanceKm = 0;
+let finalFare = 0;
+let selectedVehicle = "";
+
+const map = L.map('map').setView([20,78],5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+async function loadRoute(){
+  const g = async q => (await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}`)).json();
+  const s = await g(pickup);
+  const e = await g(drop);
+
+  const start=[s[0].lat,s[0].lon];
+  const end=[e[0].lat,e[0].lon];
+
+  distanceKm = Math.hypot(start[0]-end[0], start[1]-end[1]) * 111;
+  document.getElementById("distance").innerText = distanceKm.toFixed(2);
+
+  map.setView(start,10);
+  L.marker(start).addTo(map).bindPopup("Pickup");
+  L.marker(end).addTo(map).bindPopup("Drop");
+}
+
+function selectVehicle(el,v,m){
+  document.querySelectorAll(".vehicle").forEach(x=>x.classList.remove("active"));
+  el.classList.add("active");
+
+  selectedVehicle=v;
+  finalFare=Math.round(70 + distanceKm*15*m);
+  document.getElementById("fare").innerText=finalFare;
+}
+
+function goToPayment(){
+  if(!rideId || !selectedVehicle){
+    alert("Please select vehicle");
+    return;
+  }
+  location.href=`payment.html?rideId=${rideId}`;
+}
+
+loadRoute();
+</script>
+
+</body>
+</html>

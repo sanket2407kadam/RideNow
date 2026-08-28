@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RideNow | Driver Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f4f6f8;color:#333}
+header{background:#fff;padding:15px 40px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.logo{font-size:1.5em;font-weight:700;color:#2563eb}
+.dashboard{max-width:800px;margin:40px auto;background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);text-align:center}
+h2{color:#2563eb;margin-bottom:15px}
+button{padding:12px 28px;margin:10px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer}
+button:hover{background:#1e4fd8}
+table{width:100%;margin-top:20px;border-collapse:collapse}
+table, th, td{border:1px solid #ddd}
+th, td{padding:10px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🚘 RideNow</div>
+</header>
+
+<div class="dashboard">
+  <h2>Driver Dashboard</h2>
+  <p>Manage rides and availability.</p>
+
+  <form action="UpdateAvailabilityServlet" method="post">
+    <label>Update Availability:</label>
+    <select name="availability">
+        <option value="available">Available</option>
+        <option value="busy">Busy</option>
+    </select>
+    <button type="submit">Update</button>
+  </form>
+
+  <h3>Assigned Rides</h3>
+  <form action="ViewAssignedRidesServlet" method="get">
+      <button type="submit">View Assigned Rides</button>
+  </form>
+</div>
+</body>
+</html>
